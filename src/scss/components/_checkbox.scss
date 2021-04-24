@@ -23,19 +23,16 @@
     &:after {
       content: "";
       position: absolute;
-      left: 50%;
-      bottom: 50%;
-
-      transform: translateX(-60%) rotate(-45deg);
-
-      width: 7px;
-      height: 4px;
-      border: 1px solid #fff;
+      left: 2px;
+      bottom: 4px;
+      transform: rotate(-45deg);
+      width: 8px;
+      height: 5px;
+      border: 2px solid #fff;
       border-top: transparent;
       border-right: transparent;
-
       opacity: 0;
-      transition: opacity .2s;
+      transition: opacity 0.2s;
     }
   }
 

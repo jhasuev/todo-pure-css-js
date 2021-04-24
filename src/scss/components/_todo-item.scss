@@ -1,0 +1,30 @@
+.todo-item {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+
+  &__checkbox {
+    margin-right: 10px;
+  }
+
+  &__title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+  }
+
+  &__item.checked &__title {
+    text-decoration: line-through;
+  }
+
+  &__remove-btn {
+    padding: 5px 10px;
+    margin-left: auto;
+    display: none;
+  }
+
+  &:hover &__remove-btn {
+    display: block;
+  }
+}
