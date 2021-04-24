@@ -1,0 +1,42 @@
+.todo-list {
+  &__title {
+    font-size: 23px;
+    text-align: center;
+    margin-bottom: 1em;
+  }
+  &__group {
+    &-item {
+      display: flex;
+      align-items: center;
+      min-height: 52px;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    &-checkbox {
+      margin-right: 10px;
+    }
+    &-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 10px;
+    }
+
+    &-item.checked &-title {
+      text-decoration: line-through;
+    }
+
+    &-remove-btn {
+      padding: 5px 10px;
+      margin-left: auto;
+      display: none;
+    }
+
+    &-item:hover &-remove-btn {
+      display: block;
+    }
+  }
+}

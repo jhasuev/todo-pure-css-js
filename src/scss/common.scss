@@ -1,0 +1,17 @@
+body {
+  font: 18px "Trebuchet MS";
+}
+
+.todo-container {
+  padding: 15px;
+}
+
+@mixin placeholder-styles {
+  color: #000;
+  opacity: .35;
+}
+
+::-webkit-input-placeholder { @include placeholder-styles }
+::-moz-placeholder          { @include placeholder-styles }/* Firefox 19+ */
+:-moz-placeholder           { @include placeholder-styles }/* Firefox 18- */
+:-ms-input-placeholder      { @include placeholder-styles }
