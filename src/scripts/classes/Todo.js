@@ -2,16 +2,18 @@ import FormHTMLTemplate from "./../templates/_form"
 import ListHTMLTemplate from "./../templates/_list"
 import ListItemHTMLTemplate from "./../templates/_list-item"
 
-const STORAGE_KEY = `TODO-LIST`
-
 export default class Todo {
-  constructor(app) {
-    this.app = app
+  constructor(selector) {
+    this.selector = selector
     this.init()
   }
 
+  get storageKey() {
+    return 'TODO-LIST-FOR_' + this.selector
+  }
+
   init() {
-    this.app = document.querySelector(this.app)
+    this.app = document.querySelector(this.selector)
     if (this.app) {
       this.initLayout()
       this.initForm()
@@ -19,6 +21,8 @@ export default class Todo {
       this.initStorage()
       this.loadList()
       this.addListEvents()
+
+      this.field.focus()
     }
   }
 
@@ -38,7 +42,7 @@ export default class Todo {
     this.listCard = this.app.querySelector(".js-list-card")
     this.list = this.app.querySelector(".js-list")
 
-    this.listCard.style.display = "none"
+    this.hideListCard()
   }
 
   onAdd(event) {
@@ -48,11 +52,12 @@ export default class Todo {
     if (text) {
       this.add(text)
       this.clearFormFields()
+      this.field.focus()
     }
   }
 
   initStorage() {
-    this.storage = JSON.parse(localStorage[STORAGE_KEY] || '[]')
+    this.storage = JSON.parse(localStorage[this.storageKey] || '[]')
   }
 
   add(text) {
@@ -66,7 +71,7 @@ export default class Todo {
 
   addListItem(data, position = "before") {
     const newListItem = this.fillItem(data, this.getNewListItem())
-    this.showListBox()
+    this.showListCard()
     
     if (position === 'before') {
       this.list.prepend(newListItem)
@@ -84,18 +89,14 @@ export default class Todo {
   }
 
   loadList() {
-    if (this.storage.length) {
-      this.storage.forEach(item => {
-        this.addListItem(item, 'after')
-      })
-    }
+    this.storage.forEach(item => this.addListItem(item, 'after'))
   }
 
-  showListBox() {
+  showListCard() {
     this.listCard.style.display = ""
   }
 
-  hideListBox() {
+  hideListCard() {
     this.listCard.style.display = "none"
   }
 
@@ -125,10 +126,9 @@ export default class Todo {
     const onEvent = event => {
       const { target } = event
       
-      if (target.classList.contains("js-checkbox") && event.type === "change") {
+      if (event.type === "change" && this.isCheckbox(target)) {
         this.onChangeCheckbox(target)
-        
-      } else if (target.classList.contains("js-remove-btn") && event.type === "click") {
+      } else if (event.type === "click" && this.isRemoveButton(target)) {
         this.onRemoveClick(target)
       }
     }
@@ -137,36 +137,45 @@ export default class Todo {
     this.app.addEventListener("click", onEvent)
   }
 
+  isCheckbox(target) {
+    return target.classList.contains("js-checkbox")
+  }
+
+  isRemoveButton(target) {
+    return target.classList.contains("js-remove-btn")
+  }
+
   onChangeCheckbox(checkbox) {
-    const todoItem = checkbox.closest(".js-todo-item")
-    const id = todoItem.getAttribute("data-todo-item-id")
-    this.done(+id, checkbox.checked)
+    this.done(this.getParentItemID(checkbox), checkbox.checked)
+  }
+
+  onRemoveClick(button) {
+    this.remove(this.getParentItemID(button))
+  }
+
+  getParentItemID(element) {
+    const todoItem = element.closest(".js-todo-item")
+    return +todoItem.getAttribute("data-todo-item-id")
   }
 
   done(id, status) {
     const todoItem = this.getTodoItem(id)
-    const todoItemStorage = this.getStorageItem(id)
-    todoItemStorage.done = status
+    const dataItem = this.getStorageItem(id)
+    dataItem.done = status
     todoItem.classList[status ? "add" : "remove"]("checked")
 
     this.save()
   }
-  
-  onRemoveClick(button) {
-    const todoItem = button.closest(".js-todo-item")
-    const id = todoItem.getAttribute("data-todo-item-id")
-    this.remove(+id)
-  }
 
   remove(id) {
     const todoItem = this.getTodoItem(id)
-    const todoItemStorageIndex = this.storage.indexOf(this.getStorageItem(id))
+    const dataItemIndex = this.storage.indexOf(this.getStorageItem(id))
     
     todoItem.remove()
-    this.storage.splice(todoItemStorageIndex, 1)
+    this.storage.splice(dataItemIndex, 1)
 
     if (!this.storage.length) {
-      this.hideListBox()
+      this.hideListCard()
     }
 
     this.save()
@@ -181,6 +190,6 @@ export default class Todo {
   }
 
   save() {
-    localStorage[STORAGE_KEY] = JSON.stringify(this.storage)
+    localStorage[this.storageKey] = JSON.stringify(this.storage)
   }
 }
