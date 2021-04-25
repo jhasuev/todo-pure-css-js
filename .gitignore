@@ -19,5 +19,3 @@ yarn-error.log*
 *.sln
 *.sw?
 debug.log
-
-dist/
