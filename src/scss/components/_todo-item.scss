@@ -14,7 +14,7 @@
     margin-right: 10px;
   }
 
-  &__item.checked &__title {
+  &.checked &__title {
     text-decoration: line-through;
   }
 
